@@ -2,68 +2,94 @@ package gamestates;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HighScoreEntry implements Serializable {
     private static final long serialVersionUID = 1L;
     private String username;
-    private int level;
-    private int completedTime; // in seconds
-    private LocalDateTime updatedTime;
+    private List<ScoreEntry> scores;
+    private LocalDateTime lastUpdated;
+
+    // Default constructor for deserialization
+    public HighScoreEntry() {
+        this.scores = new ArrayList<>();
+        this.lastUpdated = LocalDateTime.now();
+    }
 
     public HighScoreEntry(String username) {
         this.username = username;
-        this.level = 0;
-        this.completedTime = 0;
-        this.updatedTime = LocalDateTime.now();
-    }
-
-    public HighScoreEntry(String username, int level, int completedTime) {
-        this.username = username;
-        this.level = level;
-        this.completedTime = completedTime;
-        this.updatedTime = LocalDateTime.now();
-    }
-    
-    public HighScoreEntry(String username, int level, int completedTime, LocalDateTime updatedTime) {
-        this.username = username;
-        this.level = level;
-        this.completedTime = completedTime;
-        this.updatedTime = updatedTime;
+        this.scores = new ArrayList<>();
+        this.lastUpdated = LocalDateTime.now();
     }
 
     public String getUsername() {
         return username;
     }
 
-    public int getLevel() {
-        return level;
+    public void addScore(int level, int completedTime) {
+        if (scores == null) {
+            scores = new ArrayList<>();
+        }
+        scores.add(new ScoreEntry(level, completedTime));
+        lastUpdated = LocalDateTime.now();
+        System.out.println("New score added for " + username + ":");
+        System.out.println("Level: " + level);
+        System.out.println("Completion Time: " + new ScoreEntry(level, completedTime).getFormattedCompletedTime());
+        System.out.println("Total scores for this user: " + scores.size());
+        System.out.println("Highest level achieved: " + getHighestLevel());
+        System.out.println("Last updated: " + getFormattedLastUpdated());
+        System.out.println("------------------------");
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-        this.updatedTime = LocalDateTime.now();
+    public List<ScoreEntry> getScores() {
+        if (scores == null) {
+            scores = new ArrayList<>();
+            System.out.println("Initialized scores list for user: " + username);
+        }
+        return scores;
     }
 
-    public int getCompletedTime() {
-        return completedTime;
+    public int getHighestLevel() {
+        if (scores == null || scores.isEmpty()) {
+            return 0;
+        }
+        return scores.stream()
+                .mapToInt(ScoreEntry::getLevel)
+                .max()
+                .orElse(0);
     }
 
-    public void setCompletedTime(int completedTime) {
-        this.completedTime = completedTime;
-        this.updatedTime = LocalDateTime.now();
+    public int getBestTimeForLevel(int level) {
+        if (scores == null || scores.isEmpty()) {
+            return 0;
+        }
+        return scores.stream()
+                .filter(score -> score.getLevel() == level)
+                .mapToInt(ScoreEntry::getCompletedTime)
+                .min()
+                .orElse(0);
     }
 
-    public LocalDateTime getUpdatedTime() {
-        return updatedTime;
+    public ScoreEntry getLatestScore() {
+        if (scores == null || scores.isEmpty()) {
+            // Return a default score entry with level 0 and current time
+            return new ScoreEntry(0, 0);
+        }
+        return scores.get(scores.size() - 1);
     }
 
-    public String getFormattedCompletedTime() {
-        int minutes = completedTime / 60;
-        int seconds = completedTime % 60;
-        return String.format("%02d:%02d", minutes, seconds);
+    public LocalDateTime getLastUpdated() {
+        if (lastUpdated == null) {
+            lastUpdated = LocalDateTime.now();
+        }
+        return lastUpdated;
     }
 
-    public String getFormattedUpdatedTime() {
-        return updatedTime.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    public String getFormattedLastUpdated() {
+        if (lastUpdated == null) {
+            lastUpdated = LocalDateTime.now();
+        }
+        return lastUpdated.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
 } 

@@ -203,9 +203,8 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
         g.setClip(START_X - 10, START_Y, tableWidth + 20, visibleRows * ROW_HEIGHT);
         
         for (int i = 0; i < scores.size(); i++) {
-            HighScoreEntry score = scores.get(i);
-            // print the score
-            // System.out.println(i + " " + score.getUsername() + " " + score.getLevel() + " " + score.getCompletedTime() + " " + score.getUpdatedTime());
+            HighScoreEntry entry = scores.get(i);
+            ScoreEntry latestScore = entry.getLatestScore();
             int y = START_Y + 35 + i * ROW_HEIGHT - scrollOffset;
             
             // Draw row background for better readability
@@ -222,22 +221,22 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
             g.drawString(rankStr, rankX, y);
             
             // Username (left-aligned)
-            g.drawString(score.getUsername(), START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING, y);
+            g.drawString(entry.getUsername(), START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING, y);
             
             // Level (center-aligned)
-            String levelStr = String.valueOf(score.getLevel());
+            String levelStr = latestScore != null ? String.valueOf(latestScore.getLevel()) : "0";
             int levelX = START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING + COLUMN_WIDTH + 
                 (COLUMN_WIDTH - g.getFontMetrics().stringWidth(levelStr)) / 2;
             g.drawString(levelStr, levelX, y);
             
             // Time (center-aligned)
-            String timeStr = score.getFormattedCompletedTime();
+            String timeStr = latestScore != null ? latestScore.getFormattedCompletedTime() : "00:00";
             int timeX = START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING + COLUMN_WIDTH * 2 + 
                 (COLUMN_WIDTH - g.getFontMetrics().stringWidth(timeStr)) / 2;
             g.drawString(timeStr, timeX, y);
             
             // Updated time (left-aligned)
-            g.drawString(score.getFormattedUpdatedTime(), 
+            g.drawString(entry.getFormattedLastUpdated(), 
                 START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING + COLUMN_WIDTH * 3, y);
         }
         

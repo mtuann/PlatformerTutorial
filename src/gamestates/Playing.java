@@ -71,6 +71,8 @@ public class Playing extends State implements Statemethods {
 	private int shipAni, shipTick, shipDir = 1;
 	private float shipHeightDelta, shipHeightChange = 0.05f * Game.SCALE;
 
+	private long levelStartTime;
+
 	public Playing(Game game) {
 		super(game);
 		initClasses();
@@ -128,11 +130,13 @@ public class Playing extends State implements Statemethods {
 		player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
 		resetAll();
 		drawShip = false;
+		levelStartTime = System.currentTimeMillis(); // Reset level timer
 	}
 
 	private void loadStartLevel() {
 		enemyManager.loadEnemies(levelManager.getCurrentLevel());
 		objectManager.loadObjects(levelManager.getCurrentLevel());
+		levelStartTime = System.currentTimeMillis(); // Initialize level timer
 	}
 
 	private void calcLvlOffset() {
@@ -427,6 +431,20 @@ public class Playing extends State implements Statemethods {
 			return;
 		}
 		this.lvlCompleted = levelCompleted;
+		
+		// Add score to high score database
+		if (levelCompleted) {
+			String username = game.getCurrentUser();
+			int currentLevel = levelManager.getLevelIndex() + 1; // +1 because level index is 0-based
+			int completedTime = (int) (System.currentTimeMillis() - levelStartTime) / 1000; // Convert to seconds
+			
+			System.out.println("\n=== Level Completed ===");
+			System.out.println("Username: " + username);
+			System.out.println("Level: " + currentLevel);
+			System.out.println("Completion Time: " + String.format("%02d:%02d", completedTime / 60, completedTime % 60));
+			
+			game.getHighScore().getScoreManager().addScore(username, currentLevel, completedTime);
+		}
 	}
 
 	public void setMaxLvlOffset(int lvlOffset) {
