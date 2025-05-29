@@ -1,6 +1,9 @@
 package main;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+
+import javax.swing.JPanel;
 
 import audio.AudioPlayer;
 import gamestates.Credits;
@@ -9,7 +12,10 @@ import gamestates.Gamestate;
 import gamestates.HighScore;
 import gamestates.Menu;
 import gamestates.Playing;
+import gamestates.UsernameRegistration;
 import ui.AudioOptions;
+import inputs.KeyboardInputs;
+import inputs.MouseInputs;
 
 public class Game implements Runnable {
 
@@ -25,6 +31,8 @@ public class Game implements Runnable {
 	private GameOptions gameOptions;
 	private AudioOptions audioOptions;
 	private AudioPlayer audioPlayer;
+	private UsernameRegistration usernameRegistration;
+	private String currentUser;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
 	public final static float SCALE = 2f;
@@ -39,6 +47,7 @@ public class Game implements Runnable {
 	public Game() {
 		System.out.println("size: " + GAME_WIDTH + " : " + GAME_HEIGHT);
 		initClasses();
+		setDefaultValues();
 		gamePanel = new GamePanel(this);
 		new GameWindow(gamePanel);
 		gamePanel.requestFocusInWindow();
@@ -54,6 +63,11 @@ public class Game implements Runnable {
 		credits = new Credits(this);
 		highScore = new HighScore(this);
 		gameOptions = new GameOptions(this);
+		usernameRegistration = new UsernameRegistration(this);
+	}
+
+	private void setDefaultValues() {
+		// Implementation of setDefaultValues method
 	}
 
 	private void startGameLoop() {
@@ -68,6 +82,7 @@ public class Game implements Runnable {
 		case OPTIONS -> gameOptions.update();
 		case CREDITS -> credits.update();
 		case HIGHSCORE -> highScore.update();
+		case USERNAME_REGISTRATION -> usernameRegistration.update();
 		case QUIT -> System.exit(0);
 		}
 	}
@@ -80,6 +95,7 @@ public class Game implements Runnable {
 		case OPTIONS -> gameOptions.draw(g);
 		case CREDITS -> credits.draw(g);
 		case HIGHSCORE -> highScore.draw(g);
+		case USERNAME_REGISTRATION -> usernameRegistration.draw(g);
 		}
 	}
 
@@ -169,5 +185,17 @@ public class Game implements Runnable {
 
 	public HighScore getHighScore() {
 		return highScore;
+	}
+
+	public void setCurrentUser(String username) {
+		this.currentUser = username;
+	}
+
+	public String getCurrentUser() {
+		return currentUser;
+	}
+
+	public UsernameRegistration getUsernameRegistration() {
+		return usernameRegistration;
 	}
 }

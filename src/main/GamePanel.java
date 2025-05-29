@@ -3,6 +3,7 @@ package main;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
+import gamestates.Gamestate;
 import inputs.KeyboardInputs;
 import inputs.MouseInputs;
 import static main.Game.GAME_HEIGHT;
@@ -34,6 +35,17 @@ public class GamePanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		game.render(g);
+	}
+
+	public void render(Graphics g) {
+		switch (Gamestate.state) {
+		case MENU -> game.getMenu().draw(g);
+		case PLAYING -> game.getPlaying().draw(g);
+		case OPTIONS -> game.getGameOptions().draw(g);
+		case CREDITS -> game.getCredits().draw(g);
+		case HIGHSCORE -> game.getHighScore().draw(g);
+		case USERNAME_REGISTRATION -> game.getUsernameRegistration().draw(g);
+		}
 	}
 
 	public Game getGame() {

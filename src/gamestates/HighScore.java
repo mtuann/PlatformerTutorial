@@ -372,4 +372,8 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
         scrollOffset = Math.max(0, Math.min(maxScrollOffset, scrollOffset + scrollAmount));
         updateScrollbarThumb();
     }
+
+    public HighScoreManager getScoreManager() {
+        return scoreManager;
+    }
 } 

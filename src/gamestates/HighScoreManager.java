@@ -1,63 +1,79 @@
 package gamestates;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDateTime;
 
-
 public class HighScoreManager {
+    private static final String DATA_FILE = "highscores.dat";
     private List<HighScoreEntry> scores;
+    private Map<String, HighScoreEntry> userMap;
     private String currentSortColumn = "level";
     private boolean ascending = false;
 
     public HighScoreManager() {
         scores = new ArrayList<>();
-        // Add some sample data
-        addSampleData();
+        userMap = new HashMap<>();
+        loadData();
     }
 
-    private void addSampleData() {
-        // scores.add(new HighScoreEntry("Alexander", 85, 95));
-        // scores.add(new HighScoreEntry("Benjamin", 92, 75));
-        // scores.add(new HighScoreEntry("Charlotte", 78, 110));
-        // scores.add(new HighScoreEntry("Daniel", 95, 82));
-        // scores.add(new HighScoreEntry("Emily", 88, 98));
-        // scores.add(new HighScoreEntry("Frederick", 73, 125));
-        // scores.add(new HighScoreEntry("George", 91, 85));
-        // scores.add(new HighScoreEntry("Henry", 82, 105));
-        // scores.add(new HighScoreEntry("Isabella", 94, 78));
-        // scores.add(new HighScoreEntry("James", 86, 92));
-        // scores.add(new HighScoreEntry("Katherine", 89, 88));
-        // scores.add(new HighScoreEntry("Liam", 96, 72));
-        // scores.add(new HighScoreEntry("Michael", 83, 102));
-        // scores.add(new HighScoreEntry("Oliver", 90, 86));
-        // scores.add(new HighScoreEntry("William", 87, 94));
-        scores.add(new HighScoreEntry("Alexander", 85, 95, LocalDateTime.of(2023, 11, 1, 14, 30, 0)));
-        scores.add(new HighScoreEntry("Benjamin", 92, 75, LocalDateTime.of(2023, 11, 2, 15, 45, 0)));
-        scores.add(new HighScoreEntry("Charlotte", 78, 110, LocalDateTime.of(2023, 11, 3, 9, 15, 0)));
-        scores.add(new HighScoreEntry("Daniel", 95, 82, LocalDateTime.of(2023, 11, 4, 11, 20, 0)));
-        scores.add(new HighScoreEntry("Emily", 88, 98, LocalDateTime.of(2023, 11, 5, 16, 10, 0)));
-        scores.add(new HighScoreEntry("Frederick", 73, 125, LocalDateTime.of(2023, 11, 6, 13, 25, 0)));
-        scores.add(new HighScoreEntry("George", 91, 85, LocalDateTime.of(2023, 11, 7, 10, 40, 0)));
-        scores.add(new HighScoreEntry("Henry", 82, 105, LocalDateTime.of(2023, 11, 8, 17, 55, 0)));
-        scores.add(new HighScoreEntry("Isabella", 94, 78, LocalDateTime.of(2023, 11, 9, 12, 05, 0)));
-        scores.add(new HighScoreEntry("James", 86, 92, LocalDateTime.of(2023, 11, 10, 14, 15, 0)));
-        scores.add(new HighScoreEntry("Katherine", 89, 88, LocalDateTime.of(2023, 11, 11, 15, 30, 0)));
-        scores.add(new HighScoreEntry("Liam", 96, 72, LocalDateTime.of(2023, 11, 12, 9, 45, 0)));
-        scores.add(new HighScoreEntry("Michael", 83, 102, LocalDateTime.of(2023, 11, 13, 11, 50, 0)));
-        scores.add(new HighScoreEntry("Oliver", 90, 86, LocalDateTime.of(2023, 11, 14, 16, 20, 0)));
-        scores.add(new HighScoreEntry("William", 87, 94, LocalDateTime.of(2023, 11, 15, 13, 35, 0)));
-        scores.add(new HighScoreEntry("Sophie", 93, 81, LocalDateTime.of(2023, 11, 16, 10, 25, 0)));
-        scores.add(new HighScoreEntry("Thomas", 84, 97, LocalDateTime.of(2023, 11, 17, 17, 40, 0)));
-        scores.add(new HighScoreEntry("Victoria", 97, 71, LocalDateTime.of(2023, 11, 18, 12, 55, 0)));
-        scores.add(new HighScoreEntry("Zachary", 81, 108, LocalDateTime.of(2023, 11, 19, 14, 10, 0)));
-        scores.add(new HighScoreEntry("Amelia", 88, 89, LocalDateTime.of(2023, 11, 20, 15, 25, 0)));
+    private void loadData() {
+        File file = new File(DATA_FILE);
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                @SuppressWarnings("unchecked")
+                Map<String, HighScoreEntry> loadedData = (Map<String, HighScoreEntry>) ois.readObject();
+                userMap = loadedData;
+                scores = new ArrayList<>(userMap.values());
+                sortScores();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void addScore(String username, int level, int completedTime) {
-        scores.add(new HighScoreEntry(username, level, completedTime));
+    private void saveData() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(userMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addOrUpdateUser(String username, int level, int completedTime) {
+        HighScoreEntry entry = userMap.get(username);
+        if (entry == null) {
+            entry = new HighScoreEntry(username, level, completedTime);
+            userMap.put(username, entry);
+            scores.add(entry);
+        } else {
+            entry.setLevel(level);
+            entry.setCompletedTime(completedTime);
+        }
         sortScores();
+        saveData();
+    }
+
+    public void addNewUser(String username) {
+        if (!userMap.containsKey(username)) {
+            HighScoreEntry entry = new HighScoreEntry(username);
+            userMap.put(username, entry);
+            scores.add(entry);
+            sortScores();
+            saveData();
+        }
+    }
+
+    public HighScoreEntry getUser(String username) {
+        return userMap.get(username);
     }
 
     public List<HighScoreEntry> getScores() {

@@ -1,5 +1,7 @@
 package gamestates;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -48,6 +50,16 @@ public class Menu extends State implements Statemethods {
 	public void draw(Graphics g) {
 		g.drawImage(backgroundImgPink, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
 		g.drawImage(backgroundImg, menuX, menuY, menuWidth, menuHeight, null);
+
+		// Draw username if available
+		String currentUser = game.getCurrentUser();
+		if (currentUser != null && !currentUser.isEmpty()) {
+			g.setColor(Color.WHITE);
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			String usernameText = "Welcome, " + currentUser;
+			int textWidth = g.getFontMetrics().stringWidth(usernameText);
+			g.drawString(usernameText, Game.GAME_WIDTH/2 - textWidth/2, 30);
+		}
 
 		for (MenuButton mb : buttons)
 			mb.draw(g);

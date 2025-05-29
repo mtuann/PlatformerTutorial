@@ -1,12 +1,21 @@
 package gamestates;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class HighScoreEntry {
+public class HighScoreEntry implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String username;
     private int level;
     private int completedTime; // in seconds
     private LocalDateTime updatedTime;
+
+    public HighScoreEntry(String username) {
+        this.username = username;
+        this.level = 0;
+        this.completedTime = 0;
+        this.updatedTime = LocalDateTime.now();
+    }
 
     public HighScoreEntry(String username, int level, int completedTime) {
         this.username = username;
@@ -30,8 +39,18 @@ public class HighScoreEntry {
         return level;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+        this.updatedTime = LocalDateTime.now();
+    }
+
     public int getCompletedTime() {
         return completedTime;
+    }
+
+    public void setCompletedTime(int completedTime) {
+        this.completedTime = completedTime;
+        this.updatedTime = LocalDateTime.now();
     }
 
     public LocalDateTime getUpdatedTime() {
