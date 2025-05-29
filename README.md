@@ -13,6 +13,48 @@ A 2D platformer game developed as a final project for the "Object-Oriented Progr
 - Particle effects and animations
 - Save/load game progress
 
+## Additional Features
+
+### User Registration System
+- Username registration with validation
+- Support for existing users to continue with their accounts
+- Welcome message displaying the current user's name in the main menu
+- Username validation rules:
+  - Only letters and numbers allowed
+  - Maximum length of 15 characters
+  - Case-insensitive uniqueness check
+
+### High Score System
+- Comprehensive leaderboard with multiple sorting options:
+  - Username (alphabetical)
+  - Level achieved
+  - Completion time
+  - Last updated time
+- Multiple score entries per user:
+  - Each level completion is recorded separately
+  - Tracks highest level achieved
+  - Records best completion time for each level
+  - Maintains history of all attempts
+
+### Data Persistence
+- All user data and scores are stored in a single `highscores.dat` file
+- Data structure includes:
+  - User information
+  - Multiple score entries per user
+  - Level completion times
+  - Timestamps for each entry
+- Automatic data loading and saving
+- Robust error handling for data operations
+
+### Level Completion Tracking
+- Automatic score recording when completing levels
+- Tracks:
+  - Level number
+  - Completion time
+  - Timestamp
+- Updates user's highest level and best times
+- Detailed logging of level completion events
+
 ## 👥 Team Members
 
 - [Team Member 1 Name] - [Role/Contribution]
@@ -145,4 +187,42 @@ This project is created for educational purposes as part of the "Object-Oriented
 - Course instructors
 - Game development community
 - Open-source resources used
-- [Any other acknowledgments] 
+- [Any other acknowledgments]
+
+## Technical Details
+
+### Data Structure
+The game uses a serialized data structure to store all user information and scores:
+- `HighScoreEntry` class for user data
+- `ScoreEntry` class for individual level completions
+- Automatic initialization of new users
+- Null safety checks for data integrity
+
+### UI Enhancements
+- Welcome message in main menu
+- Interactive leaderboard with sorting buttons
+- Scrollable score display
+- Visual feedback for user interactions
+
+### Error Handling
+- Graceful handling of missing data
+- Automatic initialization of new users
+- Data validation and sanitization
+- Backup mechanisms for data persistence
+
+## How to Use
+
+1. Start the game and register a username
+2. Play through levels to accumulate scores
+3. View your progress in the high score menu
+4. Sort scores by different attributes
+5. Continue playing with existing account on next launch
+
+## Data Storage
+All game data is stored in `highscores.dat`, which contains:
+- User accounts
+- Level completion records
+- Best times
+- Achievement history
+
+The data is automatically loaded when the game starts and saved when changes occur. 
