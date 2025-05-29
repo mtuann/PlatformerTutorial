@@ -21,6 +21,7 @@ public class KeyboardInputs implements KeyListener {
 		case MENU -> gamePanel.getGame().getMenu().keyReleased(e);
 		case PLAYING -> gamePanel.getGame().getPlaying().keyReleased(e);
 		case CREDITS -> gamePanel.getGame().getCredits().keyReleased(e);
+		case HIGHSCORE -> gamePanel.getGame().getHighScore().keyReleased(e);
 		}
 	}
 

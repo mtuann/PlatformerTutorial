@@ -6,6 +6,7 @@ import audio.AudioPlayer;
 import gamestates.Credits;
 import gamestates.GameOptions;
 import gamestates.Gamestate;
+import gamestates.HighScore;
 import gamestates.Menu;
 import gamestates.Playing;
 import ui.AudioOptions;
@@ -20,6 +21,7 @@ public class Game implements Runnable {
 	private Playing playing;
 	private Menu menu;
 	private Credits credits;
+	private HighScore highScore;
 	private GameOptions gameOptions;
 	private AudioOptions audioOptions;
 	private AudioPlayer audioPlayer;
@@ -40,6 +42,7 @@ public class Game implements Runnable {
 		gamePanel = new GamePanel(this);
 		new GameWindow(gamePanel);
 		gamePanel.requestFocusInWindow();
+		highScore.initMouseWheelListener();
 		startGameLoop();
 	}
 
@@ -49,6 +52,7 @@ public class Game implements Runnable {
 		menu = new Menu(this);
 		playing = new Playing(this);
 		credits = new Credits(this);
+		highScore = new HighScore(this);
 		gameOptions = new GameOptions(this);
 	}
 
@@ -63,6 +67,7 @@ public class Game implements Runnable {
 		case PLAYING -> playing.update();
 		case OPTIONS -> gameOptions.update();
 		case CREDITS -> credits.update();
+		case HIGHSCORE -> highScore.update();
 		case QUIT -> System.exit(0);
 		}
 	}
@@ -74,6 +79,7 @@ public class Game implements Runnable {
 		case PLAYING -> playing.draw(g);
 		case OPTIONS -> gameOptions.draw(g);
 		case CREDITS -> credits.draw(g);
+		case HIGHSCORE -> highScore.draw(g);
 		}
 	}
 
@@ -141,6 +147,10 @@ public class Game implements Runnable {
 		return playing;
 	}
 
+	public GamePanel getGamePanel() {
+		return gamePanel;
+	}
+
 	public Credits getCredits() {
 		return credits;
 	}
@@ -155,5 +165,9 @@ public class Game implements Runnable {
 
 	public AudioPlayer getAudioPlayer() {
 		return audioPlayer;
+	}
+
+	public HighScore getHighScore() {
+		return highScore;
 	}
 }
