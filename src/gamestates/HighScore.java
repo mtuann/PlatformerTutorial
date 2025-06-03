@@ -24,18 +24,23 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
     private boolean[] buttonHover;
     private boolean[] buttonPressed;
     private UrmButton homeButton;
-    private static final int COLUMN_WIDTH = 200;
+    private static final int COLUMN_WIDTH = 250;
     private static final int ROW_HEIGHT = 40;
-    private static final int START_X = 400;
-    private static final int START_Y = 180;  // Increased to make room for buttons
+    private static final int START_X = 350;
+    private static final int START_Y = 180;
     private static final int RANK_COLUMN_WIDTH = 60;
     private static final int RANK_USERNAME_SPACING = 40;
-    private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 20);
-    private static final Font DATA_FONT = new Font("Arial", Font.PLAIN, 16);
-    private static final Color BUTTON_BG = new Color(0, 0, 0, 150);
-    private static final Color BUTTON_HOVER = new Color(50, 50, 50, 200);
-    private static final Color BUTTON_PRESSED = new Color(100, 100, 100, 200);
-    private static final Color BUTTON_BORDER = new Color(255, 255, 255, 100);
+    private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 24);
+    private static final Font DATA_FONT = new Font("Arial", Font.BOLD, 18);
+    private static final Color BUTTON_BG = new Color(0, 0, 0, 180);
+    private static final Color BUTTON_HOVER = new Color(50, 50, 50, 220);
+    private static final Color BUTTON_PRESSED = new Color(100, 100, 100, 240);
+    private static final Color BUTTON_BORDER = new Color(255, 255, 255, 150);
+    private static final Color HEADER_TEXT_COLOR = new Color(255, 215, 0);
+    private static final Color ROW_EVEN_COLOR = new Color(255, 255, 255, 30);
+    private static final Color ROW_ODD_COLOR = new Color(255, 255, 255, 15);
+    private static final Color TEXT_COLOR = new Color(255, 0, 0);
+    private static final Color RANK_COLOR = new Color(255, 215, 0);
     private static final int HEADER_SPACING = 20;
     
     // Scrollbar properties
@@ -139,11 +144,14 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
         // Draw background
         g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
 
-        // Draw title
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 40));
+        // Draw title with shadow
+        g.setColor(new Color(0, 0, 0, 150));
+        g.setFont(new Font("Arial", Font.BOLD, 44));
         String title = "HIGH SCORES";
         int titleWidth = g.getFontMetrics().stringWidth(title);
+        g.drawString(title, Game.GAME_WIDTH/2 - titleWidth/2 + 2, 82);
+        
+        g.setColor(new Color(255, 215, 0));
         g.drawString(title, Game.GAME_WIDTH/2 - titleWidth/2, 80);
 
         // Draw home button
@@ -172,7 +180,7 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
             }
             
             // Draw header text
-            g.setColor(Color.YELLOW);
+            g.setColor(HEADER_TEXT_COLOR);
             int textX = button.x + (button.width - g.getFontMetrics().stringWidth(headers[i])) / 2;
             int textY = button.y + button.height - 10;
             g.drawString(headers[i], textX, textY);
@@ -208,19 +216,17 @@ public class HighScore extends State implements Statemethods, MouseWheelListener
             int y = START_Y + 35 + i * ROW_HEIGHT - scrollOffset;
             
             // Draw row background for better readability
-            if (i % 2 == 0) {
-                g.setColor(new Color(255, 255, 255, 20));
-                g.fillRect(START_X - 10, y - ROW_HEIGHT + 5, tableWidth + 20, ROW_HEIGHT);
-            }
-            
-            g.setColor(Color.WHITE);
+            g.setColor(i % 2 == 0 ? ROW_EVEN_COLOR : ROW_ODD_COLOR);
+            g.fillRect(START_X - 10, y - ROW_HEIGHT + 5, tableWidth + 20, ROW_HEIGHT);
             
             // Rank (center-aligned)
+            g.setColor(RANK_COLOR);
             String rankStr = String.valueOf(i + 1);
             int rankX = START_X + (RANK_COLUMN_WIDTH - g.getFontMetrics().stringWidth(rankStr)) / 2;
             g.drawString(rankStr, rankX, y);
             
             // Username (left-aligned)
+            g.setColor(TEXT_COLOR);
             g.drawString(entry.getUsername(), START_X + RANK_COLUMN_WIDTH + RANK_USERNAME_SPACING, y);
             
             // Level (center-aligned)
